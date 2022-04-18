@@ -14,16 +14,20 @@ namespace Blog
 
         static void Main(string[] args)
         {
-            //ReadUsers();
+            var connection = new SqlConnection(CONNECTION_STRING);
+            connection.Open();
+            ReadUsers(connection);
+            ReadRoles(connection);
             //ReadUser();
             //CreateUser();
             //UpdateUser();
             //DeleteUser();
+            connection.Close();
         }
 
-        public static void ReadUsers()
+        public static void ReadUsers(SqlConnection connection)
         {
-            var repository = new UserRepository();
+            var repository = new UserRepository(connection);
             var users = repository.Get();
             foreach (var user in users)
             {
@@ -31,62 +35,75 @@ namespace Blog
             }
         }
 
-        public static void ReadUser()
+        public static void ReadRoles(SqlConnection connection)
         {
-            using (var connection = new SqlConnection(CONNECTION_STRING))
+            var repository = new RoleRepository(connection);
+            var roles = repository.Get();
+            foreach (var role in roles)
             {
-                var user = connection.Get<User>(1);
-                Console.WriteLine(user.Name);
+                Console.WriteLine(role.Name);
             }
         }
 
-        public static void CreateUser()
-        {
-            var user = new User()
-            {
-                Bio = "Equipe GameDev",
-                Email = "GameDev@mail.com",
-                Image = "https://",
-                Name = "Equipe GameDev2022",
-                PasswordHash = "HASH",
-                Slug = "equipe-gamedev"
-            };
 
-            using (var connection = new SqlConnection(CONNECTION_STRING))
-            {
-                connection.Insert<User>(user);
-                Console.WriteLine("Cadastro realizado com sucesso");
-            }
-        }
+        #region
+        //public static void ReadUser()
+        //{
+        //    using (var connection = new SqlConnection(CONNECTION_STRING))
+        //    {
+        //        var user = connection.Get<User>(1);
+        //        Console.WriteLine(user.Name);
+        //    }
+        //}
 
-        public static void UpdateUser()
-        {
-            var user = new User()
-            {
-                Id = 2,
-                Bio = "Equipe | GameDev",
-                Email = "GameDev@mail.com",
-                Image = "https://",
-                Name = "Equipe de suporte GameDev2022",
-                PasswordHash = "HASH",
-                Slug = "equipe-gamedev"
-            };
+        //public static void CreateUser()
+        //{
+        //    var user = new User()
+        //    {
+        //        Bio = "Equipe GameDev",
+        //        Email = "GameDev@mail.com",
+        //        Image = "https://",
+        //        Name = "Equipe GameDev2022",
+        //        PasswordHash = "HASH",
+        //        Slug = "equipe-gamedev"
+        //    };
 
-            using (var connection = new SqlConnection(CONNECTION_STRING))
-            {
-                connection.Update<User>(user);
-                Console.WriteLine("Atualização realizado com sucesso");
-            }
-        }
+        //    using (var connection = new SqlConnection(CONNECTION_STRING))
+        //    {
+        //        connection.Insert<User>(user);
+        //        Console.WriteLine("Cadastro realizado com sucesso");
+        //    }
+        //}
 
-        public static void DeleteUser()
-        {
-            using (var connection = new SqlConnection(CONNECTION_STRING))
-            {
-                var user = connection.Get<User>(2);
-                connection.Delete<User>(user);
-                Console.WriteLine("Exclusão realizado com sucesso");
-            }
-        }
+        //public static void UpdateUser()
+        //{
+        //    var user = new User()
+        //    {
+        //        Id = 2,
+        //        Bio = "Equipe | GameDev",
+        //        Email = "GameDev@mail.com",
+        //        Image = "https://",
+        //        Name = "Equipe de suporte GameDev2022",
+        //        PasswordHash = "HASH",
+        //        Slug = "equipe-gamedev"
+        //    };
+
+        //    using (var connection = new SqlConnection(CONNECTION_STRING))
+        //    {
+        //        connection.Update<User>(user);
+        //        Console.WriteLine("Atualização realizado com sucesso");
+        //    }
+        //}
+
+        //public static void DeleteUser()
+        //{
+        //    using (var connection = new SqlConnection(CONNECTION_STRING))
+        //    {
+        //        var user = connection.Get<User>(2);
+        //        connection.Delete<User>(user);
+        //        Console.WriteLine("Exclusão realizado com sucesso");
+        //    }
+        //}
+        #endregion
     }
 }
