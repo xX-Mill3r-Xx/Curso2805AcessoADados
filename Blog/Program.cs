@@ -4,6 +4,7 @@ using Dapper;
 using Dapper.Contrib;
 using Blog.Models;
 using Dapper.Contrib.Extensions;
+using Blog.Repositories;
 
 namespace Blog
 {
@@ -22,14 +23,11 @@ namespace Blog
 
         public static void ReadUsers()
         {
-            using(var connection = new SqlConnection(CONNECTION_STRING))
+            var repository = new UserRepository();
+            var users = repository.Get();
+            foreach (var user in users)
             {
-                var users = connection.GetAll<User>();
-
-                foreach(var user in users)
-                {
-                    Console.WriteLine(user.Name);
-                }
+                Console.WriteLine(user.Name);
             }
         }
 
@@ -46,7 +44,7 @@ namespace Blog
         {
             var user = new User()
             {
-                Bio="Equipe GameDev",
+                Bio = "Equipe GameDev",
                 Email = "GameDev@mail.com",
                 Image = "https://",
                 Name = "Equipe GameDev2022",
