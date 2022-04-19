@@ -1,9 +1,5 @@
 ﻿using Dapper.Contrib.Extensions;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Blog.Models
 {
@@ -17,5 +13,11 @@ namespace Blog.Models
         public string Bio { get; set; }
         public string Image { get; set; }
         public string Slug { get; set; }
+        public List<Role> Roles { get; set; }
+
+        public User()
+        {
+            Roles = new List<Role>();
+        }
     }
 }

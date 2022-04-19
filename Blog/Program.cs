@@ -14,96 +14,58 @@ namespace Blog
 
         static void Main(string[] args)
         {
+            #region Console definitions
+            Console.Title = "Blog";
+            Console.ForegroundColor = ConsoleColor.White;
+            Console.BackgroundColor = ConsoleColor.DarkBlue;
+            Console.Clear();
+            #endregion
+
+            #region Conection
             var connection = new SqlConnection(CONNECTION_STRING);
             connection.Open();
             ReadUsers(connection);
             ReadRoles(connection);
-            //ReadUser();
-            //CreateUser();
-            //UpdateUser();
-            //DeleteUser();
+            ReadTags(connection);
             connection.Close();
+            #endregion
         }
 
+        #region Methods
         public static void ReadUsers(SqlConnection connection)
         {
-            var repository = new UserRepository(connection);
-            var users = repository.Get();
-            foreach (var user in users)
+            var repository = new Repository<User>(connection);
+            var items = repository.Get();
+            foreach (var item in items)
             {
-                Console.WriteLine(user.Name);
+                Console.WriteLine(item.Name);
+                foreach (var role in item.Roles)
+                {
+                    Console.WriteLine($" - {role.Name}");
+                }
             }
         }
 
         public static void ReadRoles(SqlConnection connection)
         {
-            var repository = new RoleRepository(connection);
-            var roles = repository.Get();
-            foreach (var role in roles)
+            var repository = new Repository<Role>(connection);
+            var items = repository.Get();
+            foreach (var item in items)
             {
-                Console.WriteLine(role.Name);
+                Console.WriteLine(item.Name);
             }
         }
 
-
-        #region
-        //public static void ReadUser()
-        //{
-        //    using (var connection = new SqlConnection(CONNECTION_STRING))
-        //    {
-        //        var user = connection.Get<User>(1);
-        //        Console.WriteLine(user.Name);
-        //    }
-        //}
-
-        //public static void CreateUser()
-        //{
-        //    var user = new User()
-        //    {
-        //        Bio = "Equipe GameDev",
-        //        Email = "GameDev@mail.com",
-        //        Image = "https://",
-        //        Name = "Equipe GameDev2022",
-        //        PasswordHash = "HASH",
-        //        Slug = "equipe-gamedev"
-        //    };
-
-        //    using (var connection = new SqlConnection(CONNECTION_STRING))
-        //    {
-        //        connection.Insert<User>(user);
-        //        Console.WriteLine("Cadastro realizado com sucesso");
-        //    }
-        //}
-
-        //public static void UpdateUser()
-        //{
-        //    var user = new User()
-        //    {
-        //        Id = 2,
-        //        Bio = "Equipe | GameDev",
-        //        Email = "GameDev@mail.com",
-        //        Image = "https://",
-        //        Name = "Equipe de suporte GameDev2022",
-        //        PasswordHash = "HASH",
-        //        Slug = "equipe-gamedev"
-        //    };
-
-        //    using (var connection = new SqlConnection(CONNECTION_STRING))
-        //    {
-        //        connection.Update<User>(user);
-        //        Console.WriteLine("Atualização realizado com sucesso");
-        //    }
-        //}
-
-        //public static void DeleteUser()
-        //{
-        //    using (var connection = new SqlConnection(CONNECTION_STRING))
-        //    {
-        //        var user = connection.Get<User>(2);
-        //        connection.Delete<User>(user);
-        //        Console.WriteLine("Exclusão realizado com sucesso");
-        //    }
-        //}
+        public static void ReadTags(SqlConnection connection)
+        {
+            var repository = new Repository<Tag>(connection);
+            var items = repository.Get();
+            foreach (var item in items)
+            {
+                Console.WriteLine(item.Name);
+            }
+        }
         #endregion
+
     }
 }

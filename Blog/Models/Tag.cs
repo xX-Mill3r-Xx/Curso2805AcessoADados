@@ -2,8 +2,8 @@
 
 namespace Blog.Models
 {
-    [Table("[Role]")]
-    public class Role
+    [Table("[Tag]")]
+    public class Tag
     {
         public int Id { get; set; }
         public string Name { get; set; }
