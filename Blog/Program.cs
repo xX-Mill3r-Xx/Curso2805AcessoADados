@@ -1,10 +1,7 @@
 ﻿using System;
-using Microsoft.Data.SqlClient;
-using Dapper;
-using Dapper.Contrib;
 using Blog.Models;
-using Dapper.Contrib.Extensions;
 using Blog.Repositories;
+using Microsoft.Data.SqlClient;
 
 namespace Blog
 {
@@ -14,58 +11,70 @@ namespace Blog
 
         static void Main(string[] args)
         {
-            #region Console definitions
-            Console.Title = "Blog";
-            Console.ForegroundColor = ConsoleColor.White;
-            Console.BackgroundColor = ConsoleColor.DarkBlue;
-            Console.Clear();
-            #endregion
-
-            #region Conection
-            var connection = new SqlConnection(CONNECTION_STRING);
-            connection.Open();
-            ReadUsers(connection);
-            ReadRoles(connection);
-            ReadTags(connection);
-            connection.Close();
-            #endregion
-        }
-
-        #region Methods
-        public static void ReadUsers(SqlConnection connection)
-        {
+            using var connection = new SqlConnection(CONNECTION_STRING);
             var repository = new Repository<User>(connection);
-            var items = repository.Get();
-            foreach (var item in items)
-            {
-                Console.WriteLine(item.Name);
-                foreach (var role in item.Roles)
-                {
-                    Console.WriteLine($" - {role.Name}");
-                }
-            }
+
+            // CreateUser(repository);
+            // UpdateUser(repository);
+            // DeleteUser(repository);
+            // ReadUser(repository);
+            // ReadUsers(repository);
+            ReadWithRoles(connection);
         }
 
-        public static void ReadRoles(SqlConnection connection)
+        private static void CreateUser(Repository<User> repository)
         {
-            var repository = new Repository<Role>(connection);
-            var items = repository.Get();
-            foreach (var item in items)
+            var user = new User
             {
-                Console.WriteLine(item.Name);
-            }
+                Bio = "8x Microsoft MVP",
+                Email = "andre@balta.io",
+                Image = "https://balta.io/andrebaltieri.jpg",
+                Name = "André Baltieri",
+                Slug = "andre-baltieri",
+                PasswordHash = Guid.NewGuid().ToString()
+            };
+
+            repository.Create(user);
         }
 
-        public static void ReadTags(SqlConnection connection)
+        private static void ReadUsers(Repository<User> repository)
         {
-            var repository = new Repository<Tag>(connection);
-            var items = repository.Get();
-            foreach (var item in items)
+            var users = repository.Read();
+            foreach (var item in users)
+                Console.WriteLine(item.Email);
+        }
+
+        private static void ReadUser(Repository<User> repository)
+        {
+            var user = repository.Read(2);
+            Console.WriteLine(user?.Email);
+        }
+
+        private static void UpdateUser(Repository<User> repository)
+        {
+            var user = repository.Read(2);
+            user.Email = "hello@balta.io";
+            repository.Update(user);
+
+            Console.WriteLine(user?.Email);
+        }
+
+        private static void DeleteUser(Repository<User> repository)
+        {
+            var user = repository.Read(2);
+            repository.Delete(user);
+        }
+
+        private static void ReadWithRoles(SqlConnection connection)
+        {
+            var repository = new UserRepository(connection);
+            var users = repository.ReadWithRole();
+
+            foreach (var user in users)
             {
-                Console.WriteLine(item.Name);
+                Console.WriteLine(user.Email);
+                foreach (var role in user.Roles) Console.WriteLine($" - {role.Slug}");
             }
         }
-        #endregion
-
     }
 }
